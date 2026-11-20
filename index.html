@@ -24,6 +24,17 @@
  <p class="status" id="onlineStatus" aria-live="polite"></p>
  <button class="btn secondary" id="backSetup">Back</button>
 </section>
+<section class="card hidden" id="lobby">
+ <h2 style="margin:0 0 8px">Waiting Lobby</h2>
+ <p class="small">Share this room code with your friends.</p>
+ <div class="status">Room Code: <strong id="lobbyCode">------</strong></div>
+ <div class="status" id="lobbyCount">1 / 2 Players Joined</div>
+ <h3>Players</h3>
+ <div class="players" id="lobbyPlayers"></div>
+ <p class="status" id="lobbyStatus">Waiting for the host to start the game...</p>
+ <button class="btn" id="startOnlineGame">Start Game</button>
+ <button class="btn secondary" id="leaveLobby">Leave Room</button>
+</section>
 <section class="card hidden" id="game">
  <div class="stats"><span id="modeText">Local multiplayer</span><span id="turnCount">Turn 1</span></div>
  <div class="status" id="status">Player 1's turn</div><div class="players" id="players"></div>
@@ -60,13 +71,8 @@ const authReady = signInAnonymously(auth).then(credential => {
   throw err;
 });
 onAuthStateChanged(auth, user => { currentUser = user; });
-authReady.then(() => {
-  if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = 'Connected to Firebase. Create a room or join with a code.';
-}).catch(err => {
-  if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = authErrorMessage(err);
-});
-
-const $=id=>document.getElementById(id);let N=3,K=3,mode='local',players=[],board=[],turn=0,moves=0,ended=false,winning=[];
+const $=id=>document.getElementById(id);
+authReady.then(() => { if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = 'Connected to Firebase. Create a room or join with a code.'; }).catch(err => { if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = authErrorMessage(err); });let N=3,K=3,mode='local',players=[],board=[],turn=0,moves=0,ended=false,winning=[];
 const symbols=['X','O','△','□','☆','◇'];
 function ruleText(){let n=+$('size').value,k=n===3?3:n===6?4:n===9?5:6;$('rule').textContent=`${n}×${n}: get ${k} matching symbols in a row, column or diagonal to win.`;$('count').disabled=$('mode').value==='ai';$('difficulty').disabled=$('mode').value!=='ai';$('onlineNote').classList.toggle('hidden',$('mode').value!=='online')}
 $('size').onchange=ruleText;$('mode').onchange=ruleText;ruleText();
@@ -140,22 +146,36 @@ async function waitForAuth(){
     return await Promise.race([authReady,new Promise((_,reject)=>setTimeout(()=>reject(new Error('Firebase sign-in is taking too long. Check your internet connection, then reload the page.')),15000))]);
   } catch(err) { throw new Error(authErrorMessage(err)); }
 }
-async function createOnlineRoom(){try{const user=await waitForAuth();const code=makeRoomCode();const n=+$('size').value,k=getWinLength(n),max=+$('count').value,name=$('onlineName').value.trim().slice(0,18)||'Player';const room={createdAt:Date.now(),hostUid:user.uid,settings:{boardSize:n,winLength:k,maxPlayers:max},players:{[user.uid]:{name,symbol:'X',joinedAt:Date.now()}},game:{board:Array(n*n).fill(''),turn:0,moves:0,ended:false,winning:[],winnerUid:null}};await set(ref(db,`rooms/${code}`),room);$('onlineStatus').textContent=`Room created: ${code}. Share this code with friends.`;$('roomCode').value=code;listenToRoom(code); }catch(e){showOnlineError(e)}}
+async function createOnlineRoom(){try{const user=await waitForAuth();const code=makeRoomCode();const n=+$('size').value,k=getWinLength(n),max=+$('count').value,name=$('onlineName').value.trim().slice(0,18)||'Player';const room={createdAt:Date.now(),hostUid:user.uid,settings:{boardSize:n,winLength:k,maxPlayers:max},players:{[user.uid]:{name,symbol:'X',joinedAt:Date.now()}},game:{board:Array(n*n).fill(''),turn:0,moves:0,ended:false,winning:[],winnerUid:null,started:false}};await set(ref(db,`rooms/${code}`),room);$('onlineStatus').textContent=`Room created: ${code}. Share this code with friends.`;$('roomCode').value=code;listenToRoom(code); }catch(e){showOnlineError(e)}}
 async function joinOnlineRoom(){try{const user=await waitForAuth();const code=$('roomCode').value.trim().toUpperCase();if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code))throw new Error('Enter a valid 6-character room code.');const roomRef=ref(db,`rooms/${code}`);const snap=await get(roomRef);if(!snap.exists())throw new Error('Room not found. Check the code.');const room=snap.val();const existing=room.players||{};if(existing[user.uid]){listenToRoom(code);return}const ids=Object.keys(existing);if(ids.length>=room.settings.maxPlayers)throw new Error('This room is full.');const symbols=['X','O','△','□','☆','◇'];const name=$('onlineName').value.trim().slice(0,18)||'Player';await set(ref(db,`rooms/${code}/players/${user.uid}`),{name,symbol:symbols[ids.length],joinedAt:Date.now()});$('onlineStatus').textContent=`Joined room ${code}.`;listenToRoom(code);}catch(e){showOnlineError(e)}}
-function listenToRoom(code){if(onlineUnsubscribe)onlineUnsubscribe();onlineRoomCode=code;onlineUnsubscribe=onValue(ref(db,`rooms/${code}`),snap=>{if(!snap.exists()){$('onlineStatus').textContent='Room no longer exists.';return}const room=snap.val(),list=Object.entries(room.players||{}).sort((a,b)=>(a[1].joinedAt||0)-(b[1].joinedAt||0)||a[0].localeCompare(b[0]));players=list.map(([uid,p])=>({uid,name:p.name,symbol:p.symbol,ai:false}));N=room.settings.boardSize;K=room.settings.winLength;mode='online';const g=room.game||{};board=g.board||Array(N*N).fill('');turn=Math.min(g.turn||0,Math.max(0,players.length-1));moves=g.moves||0;ended=!!g.ended;winning=g.winning||[];$('onlinePanel').classList.add('hidden');$('setup').classList.add('hidden');$('game').classList.remove('hidden');$('modeText').textContent=`Online room ${code}`;$('winRule').textContent=`First to ${K} in a row wins`;$('status').textContent=ended?(g.winnerUid?`${players.find(p=>p.uid===g.winnerUid)?.name||'A player'} wins!`:'It is a draw!'):`${players[turn]?.name||'Player'}'s turn (${players[turn]?.symbol||''})`;$('turnCount').textContent=`Turn ${moves+1}`;$('moveCount').textContent=`${moves} moves`;$('players').innerHTML=players.map((p,i)=>`<span class="player ${i===turn&&!ended?'active':''}">${p.symbol} · ${escapeHtml(p.name)}${p.uid===currentUser?.uid?' (You)':''}</span>`).join('');const el=$('board');el.style.gridTemplateColumns=`repeat(${N},minmax(0,1fr))`;el.innerHTML='';board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(v?` ${v==='X'?'x':'o'}`:'')+(winning.includes(i)?' win':'');b.textContent=v;b.disabled=!!v||ended||players[turn]?.uid!==currentUser?.uid;b.setAttribute('aria-label',`Cell ${i+1} ${v||'empty'}`);b.onclick=()=>play(i);el.appendChild(b)});},err=>showOnlineError(err))}
-async function submitOnlineMove(index){if(onlineBusy||ended||board[index]||players[turn]?.uid!==currentUser?.uid)return;onlineBusy=true;try{const user=await waitForAuth();const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);await runTransaction(gameRef,g=>{if(!g||g.ended||g.board[index]||players[g.turn]?.uid!==user.uid)return;const next=[...g.board];const symbol=players[g.turn].symbol;next[index]=symbol;const prior=board;board=next;const win=checkWin(index);board=prior;const moveCount=(g.moves||0)+1;let nextTurn=(g.turn+1)%players.length;return {...g,board:next,moves:moveCount,turn:nextTurn,ended:!!win||moveCount===N*N,winning:win||[],winnerUid:win?user.uid:null};});}catch(e){showOnlineError(e)}finally{onlineBusy=false}}
-async function resetOnlineRound(){
-  if(!onlineRoomCode) return;
-  try {
-    const user=await waitForAuth();
-    const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);
-    await runTransaction(gameRef,g=>{
-      if(!g || !rootRoomPlayerExists()) return;
-      return {...g,board:Array(N*N).fill(''),turn:0,moves:0,ended:false,winning:[],winnerUid:null};
-    });
-  } catch(err) { showOnlineError(err); }
+function listenToRoom(code){
+ if(onlineUnsubscribe)onlineUnsubscribe();
+ onlineRoomCode=code;
+ onlineUnsubscribe=onValue(ref(db,`rooms/${code}`),snap=>{
+  if(!snap.exists()){$('onlineStatus').textContent='Room no longer exists.';return;}
+  const room=snap.val();
+  const list=Object.entries(room.players||{}).sort((a,b)=>(a[1].joinedAt||0)-(b[1].joinedAt||0)||a[0].localeCompare(b[0]));
+  players=list.map(([uid,p])=>({uid,name:p.name,symbol:p.symbol,ai:false}));
+  N=room.settings.boardSize;K=room.settings.winLength;mode='online';
+  const g=room.game||{};board=g.board||Array(N*N).fill('');turn=Math.min(g.turn||0,Math.max(0,players.length-1));moves=g.moves||0;ended=!!g.ended;winning=g.winning||[];
+  $('setup').classList.add('hidden');$('onlinePanel').classList.add('hidden');
+  if(!g.started){
+   $('game').classList.add('hidden');$('lobby').classList.remove('hidden');
+   $('lobbyCode').textContent=code;
+   $('lobbyCount').textContent=`${players.length} / ${room.settings.maxPlayers} Players Joined`;
+   $('lobbyPlayers').innerHTML=players.map(p=>`<span class="player">${p.symbol} · ${escapeHtml(p.name)}${p.uid===currentUser?.uid?' (You)':''}</span>`).join('');
+   const isHost=room.hostUid===currentUser?.uid;
+   $('startOnlineGame').classList.toggle('hidden',!isHost);
+   $('lobbyStatus').textContent=isHost?'You are the host. Start when everyone has joined.':'Waiting for the host to start the game...';
+   return;
+  }
+  $('lobby').classList.add('hidden');$('game').classList.remove('hidden');
+  $('modeText').textContent=`Online room ${code}`;$('winRule').textContent=`First to ${K} in a row wins`;
+  $('status').textContent=ended?(g.winnerUid?`${players.find(p=>p.uid===g.winnerUid)?.name||'A player'} wins!`:'It is a draw!'):`${players[turn]?.name||'Player'}'s turn (${players[turn]?.symbol||''})`;
+  $('turnCount').textContent=`Turn ${moves+1}`;$('moveCount').textContent=`${moves} moves`;
+  $('players').innerHTML=players.map((p,i)=>`<span class="player ${i===turn&&!ended?'active':''}">${p.symbol} · ${escapeHtml(p.name)}${p.uid===currentUser?.uid?' (You)':''}</span>`).join('');
+  const el=$('board');el.style.gridTemplateColumns=`repeat(${N},minmax(0,1fr))`;el.innerHTML='';
+  board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(v?` ${v==='X'?'x':'o'}`:'')+(winning.includes(i)?' win':'');b.textContent=v;b.disabled=!!v||ended||players[turn]?.uid!==currentUser?.uid;b.setAttribute('aria-label',`Cell ${i+1} ${v||'empty'}`);b.onclick=()=>play(i);el.appendChild(b);});
+ },err=>showOnlineError(err));
 }
-function rootRoomPlayerExists(){return !!currentUser && !!players.find(p=>p.uid===currentUser.uid)}
-$('createRoom').onclick=createOnlineRoom;$('joinRoom').onclick=joinOnlineRoom;$('backSetup').onclick=()=>{$('onlinePanel').classList.add('hidden');$('setup').classList.remove('hidden');$('mode').value='local';ruleText()};
-</script></body></html>
-                                                                       
+async function submitOnlineMove(index){if(onlineBusy||ended||board[index]||players[turn]?.uid!==currentUser?.uid)return;onlineBusy=true;try{const user=await waitForAuth();const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);await runTransaction(gameRef,g=>{if(!g||g.ended||g.board[index]||players[g.turn]?.uid!==user.uid)return;const next=[...g.board];const symbol=players[g.turn].symbol;next[index]=symbol;const prior=board;board=next;const win=checkWin(
