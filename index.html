@@ -4,7 +4,8 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#17152f"><title>GridX Arena – Multiplayer Strategy Game</title>
 <style>
-:root{--bg:#101026;--panel:#1b1a3b;--panel2:#24224b;--blue:#4da3ff;--purple:#9b70ff;--text:#f7f5ff;--muted:#b9b5d8;--win:#37d6a2}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#29245b 0,#101026 48%,#0c0c1b 100%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;padding:18px 14px 32px}.app{max-width:620px;margin:auto}.brand{text-align:center;margin:8px 0 20px}.brand h1{font-size:clamp(25px,7vw,36px);margin:0;font-weight:900;letter-spacing:.4px;background:linear-gradient(90deg,#66c4ff,#b18aff);-webkit-background-clip:text;color:transparent}.brand p{margin:5px 0;color:var(--muted);font-size:13px}.card{background:linear-gradient(145deg,rgba(36,34,75,.96),rgba(25,24,54,.96));border:1px solid #444071;border-radius:18px;padding:16px;margin:13px 0;box-shadow:0 12px 35px #05051055}.label{display:block;font-size:13px;color:var(--muted);font-weight:700;margin:12px 0 7px}select,input{width:100%;background:#12122b;color:white;border:1px solid #555080;border-radius:11px;padding:12px;font-size:15px;outline:none} .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px 15px;color:white;font-size:15px;font-weight:800;background:linear-gradient(100deg,var(--blue),var(--purple));width:100%;margin-top:12px;cursor:pointer}.btn.secondary{background:#34315f;border:1px solid #5b568e}.btn:disabled{opacity:.45}.status{text-align:center;color:#e3ddff;font-weight:700;min-height:25px;margin:10px 0}.board{display:grid;gap:6px;margin:14px auto;max-width:480px;touch-action:manipulation}.cell{aspect-ratio:1;min-width:0;border:1px solid #56518c;border-radius:9px;background:linear-gradient(145deg,#292653,#1b1a3c);color:white;font-size:clamp(16px,6vw,34px);font-weight:900;display:grid;place-items:center;padding:0}.cell:disabled{cursor:default}.cell.x{color:#65c8ff;text-shadow:0 0 14px #4da3ff88}.cell.o{color:#c09aff;text-shadow:0 0 14px #9b70ff88}.cell.win{background:#145c50;border-color:var(--win)}.stats{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}.small{color:var(--muted);font-size:12px;line-height:1.5}.hidden{display:none!important}.pill{display:inline-block;background:#302d5c;padding:5px 9px;border-radius:20px;color:#d9d2ff;font-size:12px}.players{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.player{background:#12122b;border:1px solid #494477;border-radius:10px;padding:7px 9px;font-size:12px}.player.active{border-color:#75caff;box-shadow:0 0 0 1px #75caff55}.footer{text-align:center;color:#8985ae;font-size:11px;margin-top:20px}
+:root{--bg:#101026;--panel:#1b1a3b;--panel2:#24224b;--blue:#4da3ff;--purple:#9b70ff;--text:#f7f5ff;--muted:#b9b5d8;--win:#37d6a2}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#29245b 0,#101026 48%,#0c0c1b 100%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;padding:18px 14px 32px}.app{max-width:620px;margin:auto}.brand{text-align:center;margin:8px 0 20px}.brand h1{font-size:clamp(25px,7vw,36px);margin:0;font-weight:900;letter-spacing:.4px;background:linear-gradient(90deg,#66c4ff,#b18aff);-webkit-background-clip:text;color:transparent}.brand p{margin:5px 0;color:var(--muted);font-size:13px}.card{background:linear-gradient(145deg,rgba(36,34,75,.96),rgba(25,24,54,.96));border:1px solid #444071;border-radius:18px;padding:16px;margin:13px 0;box-shadow:0 12px 35px #05051055}.label{display:block;font-size:13px;color:var(--muted);font-weight:700;margin:12px 0 7px}select,input{width:100%;background:#12122b;color:white;border:1px solid #555080;border-radius:11px;padding:12px;font-size:15px;outline:none} .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px 15px;color:white;font-size:15px;font-weight:800;background:linear-gradient(100deg,var(--blue),var(--purple));width:100%;margin-top:12px;cursor:pointer}.btn.secondary{background:#34315f;border:1px solid #5b568e}.btn:disabled{opacity:.45}.status{text-align:center;color:#e3ddff;font-weight:700;min-height:25px;margin:10px 0}.board{display:grid;gap:6px;margin:14px auto;max-width:480px;touch-action:manipulation}.cell{aspect-ratio:1;min-width:0;border:1px solid #56518c;border-radius:9px;background:linear-gradient(145deg,#292653,#1b1a3c);color:white;font-size:clamp(16px,6vw,34px);font-weight:900;display:grid;place-items:center;padding:0}.cell:disabled{cursor:default}.cell.x{color:#65c8ff;text-shadow:0 0 14px #4da3ff88}.cell.o{color:#c09aff;text-shadow:0 0 14px #9b70ff88}.cell.win{background:#145c50;border-color:var(--win)}.stats{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}.small{color:var(--muted);font-size:12px;line-height:1.5}.hidden{display:none!important}.pill{display:inline-block;background:#302d5c;padding:5px
+ 9px;border-radius:20px;color:#d9d2ff;font-size:12px}.players{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.player{background:#12122b;border:1px solid #494477;border-radius:10px;padding:7px 9px;font-size:12px}.player.active{border-color:#75caff;box-shadow:0 0 0 1px #75caff55}.footer{text-align:center;color:#8985ae;font-size:11px;margin-top:20px}
 </style></head><body><main class="app">
 <header class="brand"><h1>GRIDX ARENA</h1><p>Multiplayer Strategy Game · Blue & Purple</p></header>
 <section class="card" id="setup">
@@ -32,7 +33,8 @@
  <h3>Players</h3><div class="players" id="lobbyPlayers"></div>
  <p class="status" id="lobbyStatus">Waiting for the host to start the game...</p>
  <button class="btn" id="startOnlineGame">Start Game</button>
- <button class="btn secondary" id="leaveLobby">Leave Room</button>
+ <button class="btn secondary" id="closeRoom">Close Room (Host)</button>   
+ <button class="btn secondary" id="leaveLobby">Leave Lobby</button>
 </section>
 <section class="card hidden" id="game">
  <div class="stats"><span id="modeText">Local multiplayer</span><span id="turnCount">Turn 1</span></div>
@@ -46,9 +48,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
-import { getDatabase, ref, set, get, onValue, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";
-
-const firebaseConfig = {
+import { getDatabase, ref, set, get, onValue, runTransaction, remove } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js";const firebaseConfig = {
   apiKey: "AIzaSyBR0gHMLBdh55is2wGu0KdI0irltD6bBZ0",
   authDomain: "gridx-arena.firebaseapp.com",
   databaseURL: "https://gridx-arena-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -75,8 +75,7 @@ authReady.then(() => {
 }).catch(err => {
   if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = authErrorMessage(err);
 });
-
-const $=id=>document.getElementById(id);let N=3,K=3,mode='local',players=[],board=[],turn=0,moves=0,ended=false,winning=[];
+ const $=id=>document.getElementById(id);let N=3,K=3,mode='local',players=[],board=[],turn=0,moves=0,ended=false,winning=[];
 const symbols=['X','O','△','□','☆','◇'];
 function ruleText(){let n=+$('size').value,k=n===3?3:n===6?4:n===9?5:6;$('rule').textContent=`${n}×${n}: get ${k} matching symbols in a row, column or diagonal to win.`;$('count').disabled=$('mode').value==='ai';$('difficulty').disabled=$('mode').value!=='ai';$('onlineNote').classList.toggle('hidden',$('mode').value!=='online')}
 $('size').onchange=ruleText;$('mode').onchange=ruleText;ruleText();
@@ -92,8 +91,7 @@ function aiMove(){
  if(level==='easy') choice=empty[Math.floor(Math.random()*empty.length)];
  else if(level==='medium') choice=findStrategicMove(ai)||findStrategicMove(op)||chooseHeuristic(empty,ai,op,false);
  else choice=N===3?bestMinimaxMove(ai,op):chooseHeuristic(empty,ai,op,true);
- playAI(choice??empty[Math.floor(Math.random()*empty.length)]);
-}
+ playAI(choice??empty[Math.floor(Math.random()*empty.length)]);}
 function findStrategicMove(sym){for(let i=0;i<board.length;i++)if(!board[i]){board[i]=sym;let win=checkWin(i);board[i]='';if(win)return i}return null}
 function bestMinimaxMove(ai,op){
  let best=-Infinity,move=null;
@@ -132,9 +130,8 @@ function chooseHeuristic(empty,ai,op,deep){
 }
 function playAI(i){board[i]=players[turn].symbol;moves++;let result=checkWin(i);if(result){ended=true;winning=result;$('status').textContent=`${players[turn].name} wins!`}else if(moves===N*N){ended=true;$('status').textContent='It is a draw!'}else turn=(turn+1)%players.length;render();if(ended)$('status').textContent=result?`${players[(turn-1+players.length)%players.length].name} wins! 🎉`:'It is a draw!'}
 function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-$('start').onclick=start;$('again').onclick=()=>{if(mode==='online'){resetOnlineRound();return}board=Array(N*N).fill('');turn=0;moves=0;ended=false;winning=[];render()};$('settings').onclick=()=>{if(onlineUnsubscribe){onlineUnsubscribe();onlineUnsubscribe=null}onlineRoomCode=null;$('game').classList.add('hidden');$('onlinePanel').classList.add('hidden');$('setup').classList.remove('hidden')};
-
-function makeRoomCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let out='';for(let i=0;i<6;i++)out+=chars[Math.floor(Math.random()*chars.length)];return out}
+$('start').onclick=start;$('again').onclick=()=>{if(mode==='online'){resetOnlineRound();return}board=Array(N*N).fill('');turn=0;moves=0;ended=false;winning=[];render()};$('settings').onclick=()=>{if(onlineUnsubscribe){onlineUnsubscribe();onlineUnsubscribe=null}onlineRoomCode=null;$('game').classList.add('hidden');$('onlinePanel').classList.add('hidden');$('setup').classList.remove('hidden')}; 
+ function makeRoomCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let out='';for(let i=0;i<6;i++)out+=chars[Math.floor(Math.random()*chars.length)];return out}
 function getWinLength(n){return n===3?3:n===6?4:n===9?5:6}
 function showOnlineError(err){console.error(err);$('onlineStatus').textContent=err?.message||'Something went wrong. Check Firebase setup and Database Rules.'}
 function authErrorMessage(err){
@@ -151,7 +148,7 @@ async function waitForAuth(){
   } catch(err) { throw new Error(authErrorMessage(err)); }
 }
 async function createOnlineRoom(){try{const user=await waitForAuth();const code=makeRoomCode();const n=+$('size').value,k=getWinLength(n),max=+$('count').value,name=$('onlineName').value.trim().slice(0,18)||'Player';const room={createdAt:Date.now(),hostUid:user.uid,settings:{boardSize:n,winLength:k,maxPlayers:max},players:{[user.uid]:{name,symbol:'X',joinedAt:Date.now()}},game:{board:Array(n*n).fill(''),turn:0,moves:0,ended:false,winning:[],winnerUid:null,started:false}};await set(ref(db,`rooms/${code}`),room);$('onlineStatus').textContent=`Room created: ${code}. Share this code with friends.`;$('roomCode').value=code;listenToRoom(code); }catch(e){showOnlineError(e)}}
-async function joinOnlineRoom(){try{const user=await waitForAuth();const code=$('roomCode').value.trim().toUpperCase();if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code))throw new Error('Enter a valid 6-character room code.');const roomRef=ref(db,`rooms/${code}`);const snap=await get(roomRef);if(!snap.exists())throw new Error('Room not found. Check the code.');const room=snap.val();const existing=room.players||{};if(existing[user.uid]){listenToRoom(code);return}const ids=Object.keys(existing);if(ids.length>=room.settings.maxPlayers)throw new Error('This room is full.');const symbols=['X','O','△','□','☆','◇'];const name=$('onlineName').value.trim().slice(0,18)||'Player';await set(ref(db,`rooms/${code}/players/${user.uid}`),{name,symbol:symbols[ids.length],joinedAt:Date.now()});$('onlineStatus').textContent=`Joined room ${code}.`;listenToRoom(code);}catch(e){showOnlineError(e)}}
+async function joinOnlineRoom(){try{const user=await waitForAuth();const code=$('roomCode').value.trim().toUpperCase();if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code))throw new Error('Enter a valid 6-character room code.');const roomRef=ref(db,`rooms/${code}`);const snap=await get(roomRef);if(!snap.exists())throw new Error('Room not found. Check the code.');const room=snap.val();const existing=room.players||{};if(existing[user.uid]){listenToRoom(code);return}if(room.game?.started)throw new Error('This game has already started.');const ids=Object.keys(existing);if(ids.length>=room.settings.maxPlayers)throw new Error('This room is full.');const symbols=['X','O','△','□','☆','◇'];const used=ids.map(id=>existing[id].symbol);const symbol=symbols.find(sym=>!used.includes(sym));if(!symbol)throw new Error('No player symbol is available.');const name=$('onlineName').value.trim().slice(0,18)||'Player';await set(ref(db,`rooms/${code}/players/${user.uid}`),{name,symbol,joinedAt:Date.now()});$('onlineStatus').textContent=`Joined room ${code}.`;listenToRoom(code);}catch(e){showOnlineError(e)}}
 function listenToRoom(code){
  if(onlineUnsubscribe)onlineUnsubscribe();
  onlineRoomCode=code;
@@ -167,10 +164,11 @@ function listenToRoom(code){
    $('game').classList.add('hidden');$('lobby').classList.remove('hidden');
    $('lobbyCode').textContent=code;
    $('lobbyCount').textContent=`${players.length} / ${room.settings.maxPlayers} Players Joined`;
-   $('lobbyPlayers').innerHTML=players.map(p=>`<span class="player">${p.symbol} · ${escapeHtml(p.name)}${p.uid===currentUser?.uid?' (You)':''}</span>`).join('');
    const isHost=room.hostUid===currentUser?.uid;
+   renderLobbyPlayers(players, room.hostUid, isHost, !!g.started);
    $('startOnlineGame').classList.toggle('hidden',!isHost);
-   $('lobbyStatus').textContent=isHost?'You are the host. Start when everyone has joined.':'Waiting for the host to start the game...';
+   $('closeRoom').classList.toggle('hidden',!isHost);
+   $('lobbyStatus').textContent=isHost?'You are the host. You can remove players or close this room. Start when everyone has joined.':'Waiting for the host to start the game...';
    return;
   }
   $('lobby').classList.add('hidden');$('game').classList.remove('hidden');
@@ -181,7 +179,6 @@ function listenToRoom(code){
   const el=$('board');el.style.gridTemplateColumns=`repeat(${N},minmax(0,1fr))`;el.innerHTML='';
   board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(v?` ${v==='X'?'x':'o'}`:'')+(winning.includes(i)?' win':'');b.textContent=v;b.disabled=!!v||ended||players[turn]?.uid!==currentUser?.uid;b.setAttribute('aria-label',`Cell ${i+1} ${v||'empty'}`);b.onclick=()=>play(i);el.appendChild(b);});
  },err=>showOnlineError(err));
-}
 async function startOnlineGame(){
  if(!onlineRoomCode)return;
  try{
@@ -197,6 +194,61 @@ async function startOnlineGame(){
  }catch(err){$('lobbyStatus').textContent=err?.message||'Could not start game.';}
 }
 
+
+function renderLobbyPlayers(list, hostUid, isHost, gameStarted){
+ const container=$('lobbyPlayers');
+ container.innerHTML='';
+ list.forEach(p=>{
+  const item=document.createElement('div');
+  item.className='player';
+  const label=document.createElement('span');
+  label.textContent=`${p.symbol} · ${p.name}${p.uid===currentUser?.uid?' (You)':''}${p.uid===hostUid?' · HOST':''}`;
+  item.appendChild(label);
+  if(isHost && p.uid!==hostUid && !gameStarted){
+   const btn=document.createElement('button');
+   btn.type='button';btn.className='btn secondary';
+   btn.style.width='auto';btn.style.margin='6px 0 0';btn.style.padding='6px 9px';
+   btn.textContent='Remove';
+   btn.onclick=()=>removeLobbyPlayer(p.uid);
+   item.appendChild(btn);
+  }
+  container.appendChild(item);
+ });
+}
+async function removeLobbyPlayer(targetUid){
+ if(!onlineRoomCode || !targetUid) return;
+ try{
+  const user=await waitForAuth();
+  const roomRef=ref(db,`rooms/${onlineRoomCode}`);
+  const snap=await get(roomRef);
+  if(!snap.exists()) throw new Error('Room no longer exists.');
+  const room=snap.val();
+  if(room.hostUid!==user.uid) throw new Error('Only the host can remove a player.');
+  if(room.game?.started) throw new Error('Players cannot be removed after the game starts.');
+  if(targetUid===room.hostUid) throw new Error('The host cannot remove themselves here.');
+  if(!room.players?.[targetUid]) return;
+  await remove(ref(db,`rooms/${onlineRoomCode}/players/${targetUid}`));
+  $('lobbyStatus').textContent='Player removed from the room.';
+ }catch(err){$('lobbyStatus').textContent=err?.message||'Could not remove player.';}
+}
+async function closeOnlineRoom(){
+ if(!onlineRoomCode) return;
+ try{
+  const user=await waitForAuth();
+  const roomRef=ref(db,`rooms/${onlineRoomCode}`);
+  const snap=await get(roomRef);
+  if(!snap.exists()) throw new Error('Room no longer exists.');
+  if(snap.val().hostUid!==user.uid) throw new Error('Only the host can close this room.');
+  if(!confirm('Close this room for everyone?')) return;
+  await remove(roomRef);
+  if(onlineUnsubscribe){onlineUnsubscribe();onlineUnsubscribe=null;}
+  onlineRoomCode=null;
+  $('lobby').classList.add('hidden');
+  $('setup').classList.remove('hidden');
+  $('mode').value='local';ruleText();
+ }catch(err){$('lobbyStatus').textContent=err?.message||'Could not close room.';}
+}
+
 async function submitOnlineMove(index){if(onlineBusy||ended||board[index]||players[turn]?.uid!==currentUser?.uid)return;onlineBusy=true;try{const user=await waitForAuth();const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);await runTransaction(gameRef,g=>{if(!g||g.ended||g.board[index]||players[g.turn]?.uid!==user.uid)return;const next=[...g.board];const symbol=players[g.turn].symbol;next[index]=symbol;const prior=board;board=next;const win=checkWin(index);board=prior;const moveCount=(g.moves||0)+1;let nextTurn=(g.turn+1)%players.length;return {...g,board:next,moves:moveCount,turn:nextTurn,ended:!!win||moveCount===N*N,winning:win||[],winnerUid:win?user.uid:null};});}catch(e){showOnlineError(e)}finally{onlineBusy=false}}
 async function resetOnlineRound(){
   if(!onlineRoomCode) return;
@@ -210,5 +262,5 @@ async function resetOnlineRound(){
   } catch(err) { showOnlineError(err); }
 }
 function rootRoomPlayerExists(){return !!currentUser && !!players.find(p=>p.uid===currentUser.uid)}
-$('createRoom').onclick=createOnlineRoom;$('joinRoom').onclick=joinOnlineRoom;$('startOnlineGame').onclick=startOnlineGame;$('leaveLobby').onclick=()=>{if(onlineUnsubscribe){onlineUnsubscribe();onlineUnsubscribe=null}onlineRoomCode=null;$('lobby').classList.add('hidden');$('setup').classList.remove('hidden')};$('backSetup').onclick=()=>{$('onlinePanel').classList.add('hidden');$('setup').classList.remove('hidden');$('mode').value='local';ruleText()};
-</script></body></html>
+$('createRoom').onclick=createOnlineRoom;$('joinRoom').onclick=joinOnlineRoom;$('startOnlineGame').onclick=startOnlineGame;$('closeRoom').onclick=closeOnlineRoom;$('leaveLobby').onclick=()=>{if(onlineUnsubscribe){onlineUnsubscribe();onlineUnsubscribe=null}onlineRoomCode=null;$('lobby').classList.add('hidden');$('setup').classList.remove('hidden')};$('backSetup').onclick=()=>{$('onlinePanel').classList.add('hidden');$('setup').classList.remove('hidden');$('mode').value='local';ruleText()};
+</script></body></html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             }
