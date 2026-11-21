@@ -29,8 +29,7 @@
  <p class="small">Share this room code with your friends.</p>
  <div class="status">Room Code: <strong id="lobbyCode">------</strong></div>
  <div class="status" id="lobbyCount">1 / 2 Players Joined</div>
- <h3>Players</h3>
- <div class="players" id="lobbyPlayers"></div>
+ <h3>Players</h3><div class="players" id="lobbyPlayers"></div>
  <p class="status" id="lobbyStatus">Waiting for the host to start the game...</p>
  <button class="btn" id="startOnlineGame">Start Game</button>
  <button class="btn secondary" id="leaveLobby">Leave Room</button>
@@ -71,8 +70,13 @@ const authReady = signInAnonymously(auth).then(credential => {
   throw err;
 });
 onAuthStateChanged(auth, user => { currentUser = user; });
-const $=id=>document.getElementById(id);
-authReady.then(() => { if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = 'Connected to Firebase. Create a room or join with a code.'; }).catch(err => { if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = authErrorMessage(err); });let N=3,K=3,mode='local',players=[],board=[],turn=0,moves=0,ended=false,winning=[];
+authReady.then(() => {
+  if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = 'Connected to Firebase. Create a room or join with a code.';
+}).catch(err => {
+  if (!$('onlinePanel').classList.contains('hidden')) $('onlineStatus').textContent = authErrorMessage(err);
+});
+
+const $=id=>document.getElementById(id);let N=3,K=3,mode='local',players=[],board=[],turn=0,moves=0,ended=false,winning=[];
 const symbols=['X','O','△','□','☆','◇'];
 function ruleText(){let n=+$('size').value,k=n===3?3:n===6?4:n===9?5:6;$('rule').textContent=`${n}×${n}: get ${k} matching symbols in a row, column or diagonal to win.`;$('count').disabled=$('mode').value==='ai';$('difficulty').disabled=$('mode').value!=='ai';$('onlineNote').classList.toggle('hidden',$('mode').value!=='online')}
 $('size').onchange=ruleText;$('mode').onchange=ruleText;ruleText();
@@ -178,4 +182,33 @@ function listenToRoom(code){
   board.forEach((v,i)=>{const b=document.createElement('button');b.className='cell'+(v?` ${v==='X'?'x':'o'}`:'')+(winning.includes(i)?' win':'');b.textContent=v;b.disabled=!!v||ended||players[turn]?.uid!==currentUser?.uid;b.setAttribute('aria-label',`Cell ${i+1} ${v||'empty'}`);b.onclick=()=>play(i);el.appendChild(b);});
  },err=>showOnlineError(err));
 }
-async function submitOnlineMove(index){if(onlineBusy||ended||board[index]||players[turn]?.uid!==currentUser?.uid)return;onlineBusy=true;try{const user=await waitForAuth();const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);await runTransaction(gameRef,g=>{if(!g||g.ended||g.board[index]||players[g.turn]?.uid!==user.uid)return;const next=[...g.board];const symbol=players[g.turn].symbol;next[index]=symbol;const prior=board;board=next;const win=checkWin(
+async function startOnlineGame(){
+ if(!onlineRoomCode)return;
+ try{
+  const user=await waitForAuth();
+  const roomSnap=await get(ref(db,`rooms/${onlineRoomCode}`));
+  if(!roomSnap.exists())throw new Error('Room no longer exists.');
+  const room=roomSnap.val();
+  if(room.hostUid!==user.uid)throw new Error('Only the host can start the game.');
+  const ids=Object.keys(room.players||{});
+  if(ids.length<2)throw new Error('At least 2 players must join before starting.');
+  const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);
+  await runTransaction(gameRef,g=>g?{...g,started:true}:g);
+ }catch(err){$('lobbyStatus').textContent=err?.message||'Could not start game.';}
+}
+
+async function submitOnlineMove(index){if(onlineBusy||ended||board[index]||players[turn]?.uid!==currentUser?.uid)return;onlineBusy=true;try{const user=await waitForAuth();const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);await runTransaction(gameRef,g=>{if(!g||g.ended||g.board[index]||players[g.turn]?.uid!==user.uid)return;const next=[...g.board];const symbol=players[g.turn].symbol;next[index]=symbol;const prior=board;board=next;const win=checkWin(index);board=prior;const moveCount=(g.moves||0)+1;let nextTurn=(g.turn+1)%players.length;return {...g,board:next,moves:moveCount,turn:nextTurn,ended:!!win||moveCount===N*N,winning:win||[],winnerUid:win?user.uid:null};});}catch(e){showOnlineError(e)}finally{onlineBusy=false}}
+async function resetOnlineRound(){
+  if(!onlineRoomCode) return;
+  try {
+    const user=await waitForAuth();
+    const gameRef=ref(db,`rooms/${onlineRoomCode}/game`);
+    await runTransaction(gameRef,g=>{
+      if(!g || !rootRoomPlayerExists()) return;
+      return {...g,board:Array(N*N).fill(''),turn:0,moves:0,ended:false,winning:[],winnerUid:null};
+    });
+  } catch(err) { showOnlineError(err); }
+}
+function rootRoomPlayerExists(){return !!currentUser && !!players.find(p=>p.uid===currentUser.uid)}
+$('createRoom').onclick=createOnlineRoom;$('joinRoom').onclick=joinOnlineRoom;$('startOnlineGame').onclick=startOnlineGame;$('leaveLobby').onclick=()=>{if(onlineUnsubscribe){onlineUnsubscribe();onlineUnsubscribe=null}onlineRoomCode=null;$('lobby').classList.add('hidden');$('setup').classList.remove('hidden')};$('backSetup').onclick=()=>{$('onlinePanel').classList.add('hidden');$('setup').classList.remove('hidden');$('mode').value='local';ruleText()};
+</script></body></html>
